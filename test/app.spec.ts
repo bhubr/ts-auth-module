@@ -47,4 +47,37 @@ describe('test app routes', () => {
       const { error } = res.body;
       assert.strictEqual(error, 'password too short');
     }));
+
+  it('POST / login returns 401 (invalid email)', () => request(app)
+    .post('/login')
+    .send({ email: 'john@dox.com', password: 'abcdefgh' })
+    .expect(401)
+    .then((res: request.Response) => {
+      const { error } = res.body;
+      assert.strictEqual(error, 'invalid email or password');
+    }));
+
+  it('POST / login returns 401 (invalid password)', () => request(app)
+    .post('/login')
+    .send({ email: 'john@doe.com', password: 'abcdefgh' })
+    .expect(401)
+    .then((res: request.Response) => {
+      const { error } = res.body;
+      assert.strictEqual(error, 'invalid email or password');
+    }));
+
+  it('POST / login returns 200 (ok)', () => {
+    const cookieRe = /jwt=([0-9a-zA-Z\-._]+); Path=\//;
+    return request(app)
+      .post('/login')
+      .send({ email: 'john@doe.com', password: 'john2021' })
+      .expect(200)
+      .then((res: request.Response) => {
+        const { 'set-cookie': setCookie } = res.headers;
+        assert.ok(Array.isArray(setCookie));
+        const [jwtCookie] = setCookie;
+        const matchRe = jwtCookie.match(cookieRe);
+        assert.ok(matchRe !== null);
+      });
+  });
 });
