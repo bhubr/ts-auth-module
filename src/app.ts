@@ -11,17 +11,21 @@ app.get('/', (req: express.Request, res: express.Response) => {
 });
 
 interface RetNumber {
-  (): Number;
+  (): number;
 }
 const genId: RetNumber = (() => {
   let number = 0;
-  return (): Number => {
+  return (): number => {
     number += 1;
     return number;
   };
 })();
-
-const users = [];
+interface User {
+  id: number;
+  email: string;
+  password: string;
+}
+const users: Array<User> = [];
 
 app.post('/register', async (req: express.Request, res: express.Response) => {
   const { email, password } = req.body;
@@ -36,7 +40,7 @@ app.post('/register', async (req: express.Request, res: express.Response) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 12);
-  const user = {
+  const user: User = {
     id: genId(),
     email,
     password: hashedPassword,
@@ -60,7 +64,7 @@ app.post('/login', async (req: express.Request, res: express.Response) => {
     return res.status(400).send({ error: 'password too short' });
   }
 
-  const user = users.find(u => u.email === email);
+  const user = users.find((u) => u.email === email);
   if (!user) {
     return res.status(401).send({
       error: 'invalid email or password',
