@@ -1,6 +1,6 @@
 # TypeScript Auth Module
 
-This is just an experiment.
+This is just an experiment. Starting with naive, dirty, unstructured code, and making it cleaner, more maintainable afterwards.
 
 ## Setup of TS project
 
